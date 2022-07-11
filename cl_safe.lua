@@ -2,16 +2,20 @@ _onSpot = false
 isMinigame = false
 _SafeCrackingStates = "Setup"
 
+RegisterCommand("createSafe",function()
+	local ss = createSafe({math.random(0,99)})
+	print(ss)
+end)
+
 function createSafe(combination)
 	local res
 	isMinigame = not isMinigame
-	RequestStreamedTextureDict("MPSafeCracking",false)
-	RequestAmbientAudioBank("SAFE_CRACK",false)
-
+	RequestStreamedTextureDict("qadr_safe_cracking",false)
+	RequestStreamedTextureDict("ui_startup_textures",false)
 	if isMinigame then
 		InitializeSafe(combination)
 		while isMinigame do
-			playFx("mini@safe_cracking","idle_base")
+			--playFx("mini@safe_cracking","idle_base")
 			DrawSprites(true)
 			res = RunMiniGame()
 
@@ -29,33 +33,42 @@ end
 function InitializeSafe(safeCombination)
 	_initDialRotationDirection = "Clockwise"
 	_safeCombination = safeCombination
-
 	RelockSafe()
 	SetSafeDialStartNumber()
 end
 
+function DrawTexture(textureStreamed,textureName,x, y, width, height,rotation,r, g, b, a, p11)
+    if not HasStreamedTextureDictLoaded(textureStreamed) then
+       RequestStreamedTextureDict(textureStreamed, false);
+    else
+        DrawSprite(textureStreamed, textureName, x, y, width, height, rotation, r, g, b, a, p11);
+    end
+end
+
 function DrawSprites(drawLocks)
-	local textureDict = "MPSafeCracking"
-	local _aspectRatio = GetAspectRatio(true)
-    
-	DrawSprite(textureDict,"Dial_BG",0.48,0.3,0.3,_aspectRatio*0.3,0,255,255,255,255)
-	DrawSprite(textureDict,"Dial",0.48,0.3,0.3*0.5,_aspectRatio*0.3*0.5,SafeDialRotation,255,255,255,255)
+	local textureDict = "qadr_safe_cracking"
+	local _aspectRatio = 16/9 --GetAspectRatio(true)
+
+	DrawTexture("des_safe_sml_l_fail+hi","p_door_val_bankvault_small_ab",0.8,0.5,0.3,_aspectRatio*0.3,0,250,250,250,185)
+	DrawTexture(textureDict,"Dial_BG",0.8,0.5,0.2,_aspectRatio*0.2,0,255,255,255,255)
+	DrawTexture(textureDict,"Dial",0.8,0.5,0.2,_aspectRatio*0.2,SafeDialRotation,255,255,255,255)
 
 	if not drawLocks then
 		return
 	end
 
-	local xPos = 0.6
-	local yPos = (0.3*0.5)+0.035
+	local xPos = 0.933
+	local yPos = 0.43
+	local _kilittexturedic = "elements_stamps_icons"
 	for _,lockActive in pairs(_safeLockStatus) do
 		local lockString
 		if lockActive then
-			lockString = "lock_closed"
+			lockString = "stamp_locked_rank"
 		else
-			lockString = "lock_open"
+			lockString = "stamp_unlocked_rank"
 		end
 
-		DrawSprite(textureDict,lockString,xPos,yPos,0.025,_aspectRatio*0.015,0,231,194,81,255)
+		DrawTexture(_kilittexturedic,lockString,xPos,yPos,0.025,_aspectRatio*0.025,0,231,194,81,255)
 		yPos = yPos + 0.05
 	end
 end
@@ -70,12 +83,12 @@ function RunMiniGame()
 			return false
 		end
 
-		if IsControlJustPressed(0,33) then
+		if IsControlJustPressed(0,0xD27782E3) then
 			EndMiniGame(false)
 			return false
 		end
 
-		if IsControlJustPressed(0,32) then
+		if IsControlJustPressed(0,0x8FD015D8) then
 			if _onSpot then
 				ReleaseCurrentPin()
 				_onSpot = false
@@ -99,7 +112,8 @@ function RunMiniGame()
 			if correctMovement then
 				local pinUnlocked = _safeLockStatus[_currentLockNum] and currentDialNumber == _safeCombination[_currentLockNum]
 				if pinUnlocked then
-					PlaySoundFrontend(0,"TUMBLER_PIN_FALL","SAFE_CRACK_SOUNDSET",true)
+					sescal("Mud5_Sounds","Small_Safe_Tumbler")
+
 					_onSpot = true
 				end
 			end
@@ -110,9 +124,10 @@ function RunMiniGame()
 end
 
 function HandleSafeDialMovement()
-	if IsControlJustPressed(0,34) then
+	if IsControlPressed(0,0x7065027D) then
 		RotateSafeDial("Anticlockwise")
-	elseif IsControlJustPressed(0,35) then
+		--mini_games@safecrack@base: dial_turn_right_stage_00
+	elseif IsControlPressed(0,0xB4E465B4) then
 		RotateSafeDial("Clockwise")
 	else
 		RotateSafeDial("Idle")
@@ -131,7 +146,13 @@ function RotateSafeDial(rotationDirection)
 
 		local rotationChange = multiplier * rotationPerNumber
 		SafeDialRotation = SafeDialRotation + rotationChange
-		PlaySoundFrontend(0,"TUMBLER_TURN","SAFE_CRACK_SOUNDSET",true)
+		if SafeDialRotation > 360 then
+			SafeDialRotation = SafeDialRotation - 360
+		elseif SafeDialRotation < 0 then
+			SafeDialRotation = SafeDialRotation + 360
+		end
+		sescal("Mud5_Sounds","Dial_Turn_Single")
+
 	end
 
 	_currentDialRotationDirection = rotationDirection
@@ -183,14 +204,12 @@ end
 function ReleaseCurrentPin()
 	_safeLockStatus[_currentLockNum] = false
 	_currentLockNum = _currentLockNum + 1
-
 	if _requiredDialRotationDirection == "Anticlockwise" then
 		_requiredDialRotationDirection = "Clockwise"
 	else
 		_requiredDialRotationDirection = "Anticlockwise"
 	end
-
-	PlaySoundFrontend(0,"TUMBLER_PIN_FALL_FINAL","SAFE_CRACK_SOUNDSET",true)
+	sescal("Mud5_Sounds","Small_Safe_Tumbler")
 end
 
 function IsSafeUnlocked()
@@ -199,13 +218,21 @@ end
 
 function EndMiniGame(safeUnlocked)
 	if safeUnlocked then
-		PlaySoundFrontend(0,"SAFE_DOOR_OPEN","SAFE_CRACK_SOUNDSET",true)
+		sescal("Mud5_Sounds","Small_Safe_Unlock")
+
+		--mini_games@safecrack@base: open_lt
+		Citizen.CreateThread(function()
+			ClearPedTasks(PlayerPedId())
+		end)	
 	else
-		PlaySoundFrontend(0,"SAFE_DOOR_CLOSE","SAFE_CRACK_SOUNDSET",true)
+		sescal("Mud5_Sounds","Small_Safe_Unlock")
+
+		Citizen.CreateThread(function()
+			ClearPedTasks(PlayerPedId())
+		end)	
 	end
 	isMinigame = false
 	SafeCrackingStates = "Setup"
-	ClearPedTasksImmediately(PlayerPedId())
 end
 
 function playFx(dict,anim)
