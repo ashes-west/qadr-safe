@@ -111,9 +111,8 @@ function RunMiniGame()
 			local correctMovement = _requiredDialRotationDirection ~= "Idle" and (_currentDialRotationDirection == _requiredDialRotationDirection or _lastDialRotationDirection == _requiredDialRotationDirection)  
 			if correctMovement then
 				local pinUnlocked = _safeLockStatus[_currentLockNum] and currentDialNumber == _safeCombination[_currentLockNum]
-				if pinUnlocked then
+				if pinUnlocked and not _onSpot then
 					sescal("Mud5_Sounds","Small_Safe_Tumbler")
-
 					_onSpot = true
 				end
 			end
@@ -202,6 +201,9 @@ function GetCurrentSafeDialNumber(currentDialAngle)
 end
 
 function ReleaseCurrentPin()
+	local currentDialNumber = GetCurrentSafeDialNumber(SafeDialRotation)
+	local pinUnlocked = _safeLockStatus[_currentLockNum] and currentDialNumber == _safeCombination[_currentLockNum]
+	if not pinUnlocked then return end
 	_safeLockStatus[_currentLockNum] = false
 	_currentLockNum = _currentLockNum + 1
 	if _requiredDialRotationDirection == "Anticlockwise" then
