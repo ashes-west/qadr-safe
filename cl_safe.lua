@@ -14,6 +14,17 @@ function createSafe(combination)
 	RequestStreamedTextureDict("ui_startup_textures",false)
 	if isMinigame then
 		InitializeSafe(combination)
+
+		local playerPed = PlayerPedId()
+		local dict = 'mini_games@safecrack@base'
+		local anim = 'dial_turn_right_stage_00'
+		RequestAnimDict(dict)
+		while not HasAnimDictLoaded(dict) do
+			Citizen.Wait(1)
+		end
+
+		TaskPlayAnim(playerPed, dict, anim, 4.0, 4.0, -1, 1, 0, false, false, false, false)
+
 		while isMinigame do
 			--playFx("mini@safe_cracking","idle_base")
 			DrawSprites(true)
