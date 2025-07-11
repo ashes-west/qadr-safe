@@ -3,8 +3,7 @@ isMinigame = false
 _SafeCrackingStates = "Setup"
 
 RegisterCommand("createSafe",function()
-	local ss = createSafe({math.random(0,99)})
-	print(ss)
+	createSafe({math.random(0,99)})
 end)
 
 function createSafe(combination)
@@ -26,7 +25,6 @@ function createSafe(combination)
 		TaskPlayAnim(playerPed, dict, anim, 4.0, 4.0, -1, 1, 0, false, false, false, false)
 
 		while isMinigame do
-			--playFx("mini@safe_cracking","idle_base")
 			DrawSprites(true)
 			res = RunMiniGame()
 
@@ -49,11 +47,11 @@ function InitializeSafe(safeCombination)
 end
 
 function DrawTexture(textureStreamed,textureName,x, y, width, height,rotation,r, g, b, a, p11)
-    if not HasStreamedTextureDictLoaded(textureStreamed) then
-       RequestStreamedTextureDict(textureStreamed, false);
-    else
-        DrawSprite(textureStreamed, textureName, x, y, width, height, rotation, r, g, b, a, p11);
-    end
+	if not HasStreamedTextureDictLoaded(textureStreamed) then
+		RequestStreamedTextureDict(textureStreamed, false);
+	else
+		DrawSprite(textureStreamed, textureName, x, y, width, height, rotation, r, g, b, a, p11);
+	end
 end
 
 function DrawSprites(drawLocks)
@@ -136,7 +134,6 @@ end
 function HandleSafeDialMovement()
 	if IsControlPressed(0,0x7065027D) then
 		RotateSafeDial("Anticlockwise")
-		--mini_games@safecrack@base: dial_turn_right_stage_00
 	elseif IsControlPressed(0,0xB4E465B4) then
 		RotateSafeDial("Clockwise")
 	else
@@ -178,7 +175,7 @@ function RelockSafe()
 	if not _safeCombination then
 		return
 	end
-    
+
 	_safeLockStatus = InitSafeLocks()
 	_currentLockNum = 1
 	_requiredDialRotationDirection = _initDialRotationDirection
@@ -193,7 +190,7 @@ function InitSafeLocks()
 	if not _safeCombination then
 		return
 	end
-    
+
 	local locks = {}
  	for i = 1,#_safeCombination do
 		table.insert(locks,true)
@@ -233,10 +230,9 @@ function EndMiniGame(safeUnlocked)
 	if safeUnlocked then
 		sescal("Mud5_Sounds","Small_Safe_Unlock")
 
-		--mini_games@safecrack@base: open_lt
 		Citizen.CreateThread(function()
 			ClearPedTasks(PlayerPedId())
-		end)	
+		end)
 	else
 		sescal("Mud5_Sounds","Small_Safe_Unlock")
 
