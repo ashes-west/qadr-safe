@@ -8,9 +8,11 @@ local _requiredDialRotationDirection = nil   -- Stores the required direction in
 local _onSpot                        = false -- Indicates whether the player has currently aligned the dial to the correct position to unlock a pin.
 local _currentDialRotationDirection  = nil   -- Stores the current direction in which the player is rotating the safe dial. ("Clockwise", "Anticlockwise", or "Idle")
 local _lastDialRotationDirection     = nil   -- Stores the last direction in which the player was rotating the safe dial. ("Clockwise", "Anticlockwise", or "Idle")
-local _safeDialRotation              = 0     -- Current rotation angle of the safe dial in degrees. (0–360). Each number corresponds to 3.6°.
-local DEGREES_PER_NUMBER             = 3.6   -- Represents the angular increment (in degrees) for each number on the vault dial. Since the dial has 100 positions (0–99), each step corresponds to 3.6° (360° / 100).
+local _safeDialRotation              =   0   -- Current rotation angle of the safe dial in degrees. (0–360). Each number corresponds to 3.6°.
+local DEGREES_PER_NUMBER             =   3.6 -- Represents the angular increment (in degrees) for each number on the vault dial. Since the dial has 100 positions (0–99), each step corresponds to 3.6° (360° / 100).
 
+local ROTATION_DELAY                 = 100   -- Delay between dial steps in ms (tweakable). Without delay, having high FPS leads to a huge rotation even with a short key press.
+local _lastRotationTime              =   0   -- Timestamp of last dial rotation.
 
 RegisterCommand("createSafe",function()
 	createSafe({math.random(0,99), math.random(0,99), math.random(0,99)})
@@ -165,6 +167,12 @@ function HandleSafeDialMovement()
 end
 
 function RotateSafeDial(rotationDirection)
+	local currentTime = GetGameTimer()
+
+	if currentTime - _lastRotationTime < ROTATION_DELAY then
+		return
+	end
+
 	if rotationDirection == "Anticlockwise" or rotationDirection == "Clockwise" then
 		local multiplier
 		local rotationPerNumber = DEGREES_PER_NUMBER
@@ -182,6 +190,7 @@ function RotateSafeDial(rotationDirection)
 			_safeDialRotation = _safeDialRotation + 360
 		end
 		sescal("Mud5_Sounds","Dial_Turn_Single")
+		_lastRotationTime = currentTime
 
 	end
 
