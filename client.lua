@@ -43,6 +43,7 @@ function createSafe(combination)
 		-- Loop until vault is open
 		while _isMiniGameActive do
 			DrawSprites(true)
+			DrawSafeHUD()
 			local res = RunMiniGame()
 
 			if res ~= nil then
@@ -108,6 +109,30 @@ function DrawSprites(drawLocks)
 		DrawTexture(_kilittexturedic,lockString,xPos,yPos,0.025,_aspectRatio*0.025,0,231,194,81,255)
 		yPos = yPos + 0.05
 	end
+end
+
+-- TODO: make me safe themed with background image behind control keys for better readability and add start and final statement about the process
+function DrawSafeHUD()
+	local yPos = 0.9 -- Display height
+	local scale = 0.3
+
+	DrawKeyWithLabel(0.4, yPos, "ESC", "Aufgeben", IsControlPressed(0, 0x156F7119), scale)
+	DrawKeyWithLabel(0.5, yPos, "W", "Stift einrasten", IsControlPressed(0, 0x8FD015D8), scale)
+	DrawKeyWithLabel(0.6, yPos, "A", "Nach links drehen", IsControlPressed(0, 0x7065027D), scale)
+	DrawKeyWithLabel(0.7, yPos, "D", "Nach rechts drehen", IsControlPressed(0, 0xB4E465B4), scale)
+end
+
+function DrawKeyWithLabel(x, y, key, label, isActive, scale)
+	local r, g, b = 150, 150, 150 -- grey
+	if isActive then r, g, b = 0, 255, 0 end -- green when pressed
+
+	local displayText = "[" .. key .. "] " .. label
+	local varString = CreateVarString(10, "LITERAL_STRING", displayText)
+
+	SetTextScale(scale, scale)
+	SetTextColor(r, g, b, 255)
+	SetTextCentre(true)
+	DisplayText(varString, x, y)
 end
 
 function RunMiniGame()

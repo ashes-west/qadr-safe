@@ -4,7 +4,7 @@ rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aw
 
 client_script {
 	"shared/*.lua",
-	"cl_safe.lua",
+	"client.lua"
 }
 
 lua54 'yes'
