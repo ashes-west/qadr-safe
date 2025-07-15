@@ -1,0 +1,51 @@
+body {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	overflow: hidden;
+	font-family: Arial, sans-serif;
+}
+
+#hud-container {
+	display: none; /* invisible by default */;
+	position: absolute;
+	bottom: 3%;
+	right: 3%;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.key-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	position: relative;
+	z-index: 1;
+}
+
+.key {
+	font-family: "Segoe UI", "Arial Narrow", "Helvetica Neue", sans-serif;
+	background-color: rgba(10, 10, 10, 0.7);
+	border: 1px solid #cfa052;
+	border-radius: 8px;
+	color: #eee;
+	text-shadow: 1px 1px 2px black;
+    margin-right: 4px;
+}
+
+.key.active {
+	background-color: #cfa052;
+	color: #111;
+	text-shadow: none;
+}
+
+.key-label {
+	font-weight: bold;
+	margin-left: 4px;
+	margin-right: 8px;
+}
+
+.key-action {
+	font-size: 0.9em;
+	opacity: 0.8;
+}
