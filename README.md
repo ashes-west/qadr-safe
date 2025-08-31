@@ -41,10 +41,10 @@ Direkt in der client.lua, hier kann die Drehgeschwindigkeit (ROTATION_DELAY) sow
 - Spieler versucht nicht mehr sich während des Mini-Spiels zu bewegen, was zu zittern führte
 - HUD hinzugefügt, welches anzeigt, welche Tasten zu drücken sind um das Mini-Spiel zu spielen
 - Command mit variablen Argumenten hinzugefügt:: /createSafe (0 arguments: creates a 3 pin safe), /createSafe 5 (1 argument: creates a 5 pin safe), /createSafe 12 42 9 1 (> 1 argument: creates a safe with [argc] pins with the given combination)
-- API-Call mit möglich, z.B. createSafe({math.random(0, 99), math.random(0, 99), math.random(0, 99)})
+- API-Call möglich, z.B. createSafe({math.random(0, 99), math.random(0, 99), math.random(0, 99)})
 - Code-Scheibe von 360 Nummern zu 100 Nummern verteilt auf 360° angepasst
 - Konfigurierbare Verzögerung beim Code-Scheibe Drehen eingeführt, da sonst bei hohen FPS die Wählscheibe mehrere Schritte weiter sprang
-div. Code-Cleanups (Refactoring, Entfernung ungenutzter Codezeilen, Whitespaces und Einrückungen gleichgezogen, MagicNumbers entfernt)
+- div. Code-Cleanups (Refactoring, Entfernung ungenutzter Codezeilen, Whitespaces und Einrückungen gleichgezogen, MagicNumbers entfernt)
 
 ---
 
